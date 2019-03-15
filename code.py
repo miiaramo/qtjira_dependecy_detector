@@ -38,6 +38,8 @@ def get_proposed(data):
 def main():
     data = get_data()
     proposed = get_proposed(data)
+    for prop in proposed:
+        print(prop)
 
 
 if __name__ == '__main__':
