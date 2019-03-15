@@ -1,0 +1,1 @@
+# qtjira_dependecy_detector
