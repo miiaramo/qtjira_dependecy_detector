@@ -2,13 +2,17 @@ import json
 import re
 
 ISSUEPATTERN = re.compile(r'((QBS|QTBUG|QTWB)-[0-9]{1,5})')
-proposed = []
 
-def download():
+
+def get_data():
   f = open('QBS-UPC_input.json', 'r')
   data = json.loads(f.read())
   f.close()
+  return data
 
+
+def get_proposed(data):
+  proposed = []
   for requirement in data['requirements']:
     for comment in requirement['comments']:
       ids = re.findall(ISSUEPATTERN, comment['text'])
@@ -28,7 +32,13 @@ def download():
             "created_at": 0
           }
           proposed.append(dep)
-  print(proposed[0])
+  return proposed
+
+
+def main():
+  data = get_data()
+  proposed = get_proposed(data)
+
 
 if __name__ == '__main__':
-  download()
+  main()
