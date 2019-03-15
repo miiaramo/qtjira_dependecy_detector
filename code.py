@@ -13,10 +13,19 @@ def get_data():
 
 def get_proposed(data):
     proposed = []
+    found = 0
     for requirement in data['requirements']:
         for comment in requirement['comments']:
             ids = re.findall(ISSUEPATTERN, comment['text'])
             if len(ids) > 0:
+                for dependency in data['dependencies']:
+                    if dependency['fromid'] == requirement['id']:
+                        for id in ids:
+                            if id[0] == dependency['toid']:
+                                fromid = dependency['fromid']
+                                toid = dependency['toid']
+                                dependency_type = dependency['dependency_type']
+                                comment_text = comment['text']
                 for toid in ids:
                     fromid = requirement['id']
                     dep = {
@@ -32,6 +41,7 @@ def get_proposed(data):
                         "created_at": 0
                     }
                     proposed.append(dep)
+    print(found)
     return proposed
 
 
