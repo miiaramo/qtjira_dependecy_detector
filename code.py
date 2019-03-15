@@ -5,8 +5,8 @@ ISSUEPATTERN = re.compile(r'((QBS|QTBUG|QTWB)-[0-9]{1,5})')
 
 
 def get_data():
-    f = open('QBS-UPC_input.json', 'r')
-    data = json.loads(f.read())
+    f = open('QBS-UPC_input.json', 'r', encoding="utf8")
+    data = json.loads(f.read(), encoding="utf8")
     f.close()
     return data
 
