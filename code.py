@@ -1,5 +1,7 @@
 import json
 import re
+import pandas as pd
+from collections import defaultdict
 
 ISSUEPATTERN = re.compile(r'((QBS|QTBUG|QTWB)-[0-9]{1,5})')
 
@@ -9,6 +11,28 @@ def get_data():
     data = json.loads(f.read(), encoding="utf8")
     f.close()
     return data
+
+
+def get_links(data):
+    links = data['dependencies']
+    dependencies = pd.DataFrame(columns=['fromid', 'toid', 'dependency_type', 'created_at'], data=[[l['fromid'], l['toid'], l['dependency_type'], l['created_at']] for l in links])
+    return dependencies
+
+
+def get_comments_with_links(data):
+    requirements = []
+    for requirement in data['requirements']:
+        for comment in requirement['comments']:
+            ids = re.findall(ISSUEPATTERN, comment['text'])
+            if len(ids) > 0:
+                for toid in ids:
+                    requirements.append([requirement['id'], toid[0], comment['text'], comment['created_at']])
+
+    return pd.DataFrame(columns=['fromid', 'toid', 'comments', 'created_at'], data=requirements)
+
+
+def get_labeled(links, comments):
+    return pd.merge(links, comments, on=['fromid', 'toid'], how='inner')
 
 
 def get_proposed(data):
@@ -47,9 +71,15 @@ def get_proposed(data):
 
 def main():
     data = get_data()
-    proposed = get_proposed(data)
-    for prop in proposed:
-        print(prop)
+    links = get_links(data)
+    print(links)
+    comments = get_comments_with_links(data)
+    print(comments)
+    labeled = get_labeled(links, comments)
+    print(labeled[['dependency_type', 'comments']])
+    # proposed = get_proposed(data)
+    # for prop in proposed:
+    #     print(prop)
 
 
 if __name__ == '__main__':
