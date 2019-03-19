@@ -1,12 +1,14 @@
 import json
 import re
 
-ISSUEPATTERN = re.compile(r'((QBS|QTBUG|QTWB)-[0-9]{1,5})')
+FILE = 'QBS-UPC_input.json'
+PROJECTS = 'QTSOLBUG|QTSYSADM|QTJIRA|QSR|QDS|QTVSADDINBUG|QTWEBSITE|AUTOSUITE|PYSIDE|QTCOMPONENTS|QTIFW|QBS|QTMOBILITY|QTQAINFRA|QT3DS|QTCREATORBUG|QTBUG|QTWB'
+ISSUEPATTERN = re.compile(r'(('+PROJECTS+')-[0-9]{1,5})')
 
 
 def get_data():
-    f = open('QBS-UPC_input.json', 'r', encoding="utf8")
-    data = json.loads(f.read(), encoding="utf8")
+    f = open(FILE, 'r', encoding='utf8')
+    data = json.loads(f.read(), encoding='utf8')
     f.close()
     return data
 
@@ -20,16 +22,16 @@ def get_proposed(data):
                 for toid in ids:
                     fromid = requirement['id']
                     dep = {
-                        "id": '_'.join([fromid, toid[0], 'SIMILAR']),
-                        "dependency_type": "similar",
-                        "dependency_score": 1.0,
-                        "status": "proposed",
-                        "fromid": fromid,
-                        "toid": toid[0],
-                        "description": [
+                        'id': '_'.join([fromid, toid[0], 'SIMILAR']),
+                        'dependency_type': 'similar',
+                        'dependency_score': 1.0,
+                        'status': 'proposed',
+                        'fromid': fromid,
+                        'toid': toid[0],
+                        'description': [
                             comment['text']
                         ],
-                        "created_at": 0
+                        'created_at': 0
                     }
                     proposed.append(dep)
     return proposed
